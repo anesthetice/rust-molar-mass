@@ -153,9 +153,7 @@ fn main() -> () {
 
         for character in char_vec.iter() {
             if *character == ' ' {
-                if current_element.is_empty() {
-                    ()
-                } else {
+                if !current_element.is_empty() {
                     if current_element_coefficient.is_empty() {current_element_coefficient.push('1');};
                     molecule_vector[mv_index].push((current_element.clone(), current_element_coefficient.parse().unwrap()));
                     current_element.clear();
@@ -184,12 +182,18 @@ fn main() -> () {
             else if character.is_numeric() {
                 current_element_coefficient.push(*character);
             }
+
+            else {
+                if *character != '\n' {eprintln!("Invalid character : {}", character);}
+            }
         }
-        if current_element_coefficient.is_empty() {current_element_coefficient.push('1');};
-        molecule_vector[mv_index].push((current_element.clone(), current_element_coefficient.parse().unwrap()));
-        current_element.clear();
-        current_element_coefficient.clear();
-                
+        if !current_element.is_empty() {
+            if current_element_coefficient.is_empty() {current_element_coefficient.push('1');};
+            molecule_vector[mv_index].push((current_element.clone(), current_element_coefficient.parse().unwrap()));
+            current_element.clear();
+            current_element_coefficient.clear();
+        }
+
         for vec in molecule_vector {
             if !vec.is_empty() {
                 let mut molar_mass : f64 = 0.0;
@@ -199,14 +203,14 @@ fn main() -> () {
                         Some(val) => {
                             molar_mass += *val * f64::from(tuple.1);
                             molecule.push_str(&tuple.0);
-                            molecule.push_str(&tuple.1.to_string());
+                            if tuple.1 > 1 {molecule = molecule + &tuple.1.to_string();}
                         },
                         None => {
                             eprintln!("Error, could not find {} in the periodic table", tuple.0);
                         },
                     }
                 }
-                println!("{mol:<10} :   {num} g/mol", mol=molecule, num=molar_mass);
+                println!("{mol:<12} :   {num} g/mol", mol=molecule, num=molar_mass);
             }
         }
 
