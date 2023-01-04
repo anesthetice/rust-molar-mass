@@ -184,7 +184,11 @@ fn main() -> () {
             }
 
             else {
-                if *character != '\n' {eprintln!("Invalid character : {}", character);}
+                match *character {
+                    '\n' => (),
+                    '\r' => (),
+                    _ => eprintln!("Invalid character : {}", character),
+                } 
             }
         }
         if !current_element.is_empty() {
